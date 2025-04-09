@@ -8,10 +8,15 @@ const Home = () => {
   const [enhancedImage, setenhancedImage] = useState(null)
   const [loading, setLoading] = useState(false)
 
+  const handleImageUpload = (file) => {
+    console.log(file);
+    
+  }
+
     return (
     <>
       
-      <Upload />
+      <Upload handleImageUpload = {handleImageUpload}/>
       <Preview 
       uploaded = {uploadImage}
       enhanced = {enhancedImage}
