@@ -1,4 +1,6 @@
 import React from "react";
+import Loading from "./Loading";
+
 
 const Preview = (props) => {
   return (
@@ -25,11 +27,15 @@ const Preview = (props) => {
         <h2 className="text-xl font-semibold text-center bg-emerald-500 text-white">
           Enhanced Image
         </h2>
-        {props.enhanced && !props.loading ? (
+        {props.enhanced && !props.loading && (
           <img src="" alt="" className="w-full h-full object-cover" />
+        )}
+
+        {props.loading ? (
+          <Loading />
         ) : (
           <div className="flex items-center justify-center h-80 bg-gray-300">
-            No image selected!
+            No Enhanced image!
           </div>
         )}
       </div>
