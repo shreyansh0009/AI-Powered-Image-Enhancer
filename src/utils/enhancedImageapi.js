@@ -8,8 +8,10 @@ export const enhancedImageURL = async (file) => {
     const taskId = await uploadImage(file);
     console.log("Image uploaded successfully, task ID:", taskId);
 
-    const enhancedImage = await getEnhancedImage(taskId);
+    const enhancedImage = await poolEnhancedImage(taskId);
     console.log("Image enhanced successfully, URL:", enhancedImage);
+
+    return enhancedImage;
   } catch (error) {
     console.error("Error enhancing image:", error.message);
   }
@@ -54,6 +56,24 @@ const getEnhancedImage = async (taskId) => {
   }
 
   return data.data;
+};
+
+const poolEnhancedImage = async (taskId, flag = 0) => {
+  const result = await getEnhancedImage(taskId);
+
+  if (result.state === 4) {
+    console.log("Processing....");
+
+    if (flag >= 10) {
+      throw new error("Max retries reached! Please try again later.");
+    }
+
+    await new Promise((res) => setTimeout(res, 2000));
+
+    return poolEnhancedImage(taskId, flag + 1);
+  }
+  console.log("Enhanced Image URL: ", result);
+  return result.data.image;
 };
 
 // Object { status: 200, message: "success", data: {…} }
