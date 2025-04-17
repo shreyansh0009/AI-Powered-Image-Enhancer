@@ -51,35 +51,37 @@ const getEnhancedImage = async (taskId) => {
     }
   );
 
+  console.log("API Response:", data); //
   if (!data?.data) {
-    throw new Error("Failed to fetch enhanced image!");
+    throw new Error("Invalid API response");
   }
-
   return data.data;
 };
 
 const poolEnhancedImage = async (taskId, flag = 0) => {
   const result = await getEnhancedImage(taskId);
 
-  if (result.state === 4) {
-    console.log("Processing....");
-
-    if (flag >= 10) {
-      throw new error("Max retries reached! Please try again later.");
-    }
-
-    await new Promise((res) => setTimeout(res, 2000));
-
-    return poolEnhancedImage(taskId, flag + 1);
+  if (result.progress === 100 && result.state === 1) {
+    return result.image;
   }
-  console.log("Enhanced Image URL: ", result);
-  return result.data.image;
-};
 
-// Object { status: 200, message: "success", data: {…} }
-// ​
-// data: Object { task_id: "9b025769-e82b-4ce5-b1fe-19cb51421321" }
-// ​
-// message: "success"
-// ​
-// status: 200
+  if (result.state < 0 || flag >= 10) {
+    throw new Error(result.state_detail || "Enhancement failed");
+  }
+
+  if ((result.state === 1) & (result.progress === 100)) {
+    if (!result.image) {
+      throw new Error("Enhanced image URL not found!");
+    }
+    return result.image;
+  }
+
+
+  console.log(
+    `Processing... (State: ${result.state}, Progress: ${result.progress}%)`
+  );
+
+  await new Promise((res) => setTimeout(res, 2000));
+
+  return poolEnhancedImage(taskId, flag + 1);
+};
