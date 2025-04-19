@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_KEY = "wx8yaiud0xkrjpaog";
+const API_KEY = "wxtarfdl1ksniac1o";
 const API_URL = "https://techhk.aoscdn.com/";
 
 export const enhancedImageURL = async (file) => {
